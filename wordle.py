@@ -1,15 +1,15 @@
 import os
 import pandas as pd
-import game_func as gf
+import game as gm
 
 
 class Wordle:
 
-    def __init__(self, game:str) -> None:
-        self.game = game
-        self.patterns_pth = './' + 'patterns'
-        self.allowed_pth = './games/' + game + '/word_bank/allowed-guesses.txt'
-        self.answers_pth = './games/' + game + '/word_bank/answers.txt'
+    def __init__(self, pool:str, pool_dir:str, pattern_dir:str) -> None:
+        self.pool = pool
+        self.patterns_pth = pattern_dir
+        self.allowed_pth = pool_dir + '/' + pool + '/allowed-guesses.txt'
+        self.answers_pth = pool_dir + '/' + pool + '/answers.txt'
         self.__set_patterns()
         self.__set_words()
 
@@ -51,12 +51,12 @@ class Wordle:
         
         pattern = pattern_rows.iloc[0]
 
-        patternf_path = self.patterns_pth + '/' + pattern_name + '/' + self.game + '.csv'
+        patternf_path = self.patterns_pth + '/' + pattern_name + '/' + self.pool + '.csv'
 
         for i in range(0, times):
             if trace: print(i)
 
-            possible_games = gf.playMultiple(self.answers, pattern, self.words)
+            possible_games = gm.playMultiple(self.answers, pattern, self.words)
 
             pgames_array = []
 
