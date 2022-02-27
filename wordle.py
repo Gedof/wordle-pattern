@@ -51,7 +51,7 @@ class Wordle:
         
         pattern = pattern_rows.iloc[0]
 
-        patternf_path = self.patterns_pth + '/' + pattern_name + '/' + self.pool + '_' + ('repeat' if repeat_pwd else 'unique') + '.csv'
+        patternf_path = self.patterns_pth + '/' + pattern_name + '/' + self.pool + '_' + ('repeat' if repeat_pwd else 'distinct') + '.csv'
 
         if trace: print('Generating solutions...')
         for i in range(0, attempts):
