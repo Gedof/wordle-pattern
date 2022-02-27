@@ -42,26 +42,27 @@ class Wordle:
         self.answers = answers
         self.words = words
     
-    def play(self, pattern_name:str, times:int, trace:bool) -> None:
+    def play(self, pattern_name:str, attempts:int=1, repeat_pwd:bool=True, trace:bool=True) -> None:
 
         pattern_rows = self.patterns.loc[self.patterns['name'] == pattern_name]['pattern']
         if pattern_rows.empty:
-            if trace: print("Pattern named " + pattern_name + " not found.")
+            if trace: print('Pattern named ' + pattern_name + ' not found.')
             return
         
         pattern = pattern_rows.iloc[0]
 
-        patternf_path = self.patterns_pth + '/' + pattern_name + '/' + self.pool + '.csv'
+        patternf_path = self.patterns_pth + '/' + pattern_name + '/' + self.pool + '_' + ('repeat' if repeat_pwd else 'unique') + '.csv'
 
-        for i in range(0, times):
-            if trace: print(i)
+        if trace: print('Generating solutions...')
+        for i in range(0, attempts):
+            if trace: print('Attempt ' + str(i+1))
 
             possible_games = gm.playMultiple(self.answers, pattern, self.words)
 
             pgames_array = []
 
             for pg in possible_games:
-                pgames_array.append([pg[0],[x[1] for x in pg[1]]])
+                pgames_array.append([pg[0],tuple([x[1] for x in pg[1]])])
 
             pgames_df = pd.DataFrame(pgames_array, columns=['password','game'])
 
@@ -77,7 +78,10 @@ class Wordle:
             pgames_file = pd.read_csv(patternf_path)
 
             pgames_df = pd.concat([pgames_df,pgames_file])
-            pgames_df = pgames_df[~pd.DataFrame(pgames_df.password.values.tolist()).duplicated().values]
+            pgames_df = pgames_df[~pgames_df.duplicated(subset=['password','game'] if repeat_pwd else ['password']).values]
             pgames_df = pgames_df.sort_values(by='password')
 
             pgames_df.to_csv(patternf_path, index=False)
+
+            if trace: print('File updated')
+        if trace: print('Finished')

@@ -6,4 +6,4 @@ pool_dir = './word_pools'
 pattern_dir = './patterns'
 
 wordle = Wordle('wordle', pool_dir, pattern_dir)
-wordle.play('loss', 10, True)
+wordle.play('diagonal', attempts=2, repeat_pwd=True, trace=True)
